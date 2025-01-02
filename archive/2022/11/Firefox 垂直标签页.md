@@ -1,46 +1,68 @@
-文本在 Firefox 上，实现了 MS Edge 垂直标签页的效果，树状标签页扩展用的是 Sidebery，通过配合自定义浏览器样式，优化了出自己想要的效果：
+---
+tags:
+  - firefox
+  - sidebery
+  - edge
+  - vertical-toolbar
+  - tabs
+  - css
+---
+
+文本通过一些配置，在 Firefox 上增加了类似 MS Edge 的垂直标签页。树状标签页扩展用的是 Sidebery，外加一些自定义浏览器样式后，可实现如下效果：
 
 ![](images/tabs.gif)
 
 ## 扩展安装
 
-Firefox 扩展商店里的树状标签页扩展不止一个，本人是在比较后，选择了感觉上较为先进的 Sidebery。
+Firefox 扩展商店里的树状标签页扩展不止一个，本人在简单比较各个插件的优劣后，选择了个人体感最好的 [Sidebery](https://addons.mozilla.org/en-US/firefox/addon/sidebery)。
 
-本文基于扩展的 V5 Beta 版本，（这个扩展在商店里的版本是 V4 的，有些好用的功能还不支持），安装这个版本需要访问作者的 [GitHub](https://github.com/mbnuqw/sidebery) 主页，可以直接[点此安装 v5.0.0b31 版本](https://github.com/mbnuqw/sidebery/releases/download/v5.0.0b31/sidebery-5.0.0b31.xpi)。
-
-安装后，你的 Firefox 左侧应该就会显示出树状标签页了，但是这个标签页只有在点击扩展图标后才会显示，且界面操作之类体验，相比较 Edge 是有差距的。
+安装插件后，Firefox 左侧应该就会显示树状标签页了，但交互体验等方面，相比较 Edge 是有差距的。
 
 **下面会介绍我怎么把他打造成演示的样子。**
 
 ## 浏览器配置
 
-为了实现目的，下面需要修改一些设置。
+为了实现目的，我们先来作一些准备工作。
 
-首先右键 Firefox 的工具栏，点击最底下那个定制工具栏（Customize Toolbar）：
+1. 为了后续能美观又好用，我们先让标题栏显示出来。
+
+右键 Firefox 的地址栏的空闲处，然后点击 **定制工具栏（Customize Toolbar）**：
 
 ![](images/customize_toolbar.jpg)
 
-然后左下角勾选标题栏（Title Bar）后点击保存，让标题栏显示出来，这样配置后更加好看一些。
+找到并勾选左下角的 **标题栏（Title Bar）** 后，点击保存即可。
+
+
+2. 下一步我们需要自定义 Firefox 的样式，在此之前需要打开一个配置项。
+在地址栏中输入 `about:config` 并回车访问（当作是个网址），遇到警告页面的话就点“接受风险并继续”，然后在顶部输入 `toolkit.legacyUserProfileCustomizations.stylesheets` 以搜索，最后双击列出来的选项，确保其值 `true` 即可。
+![image](https://github.com/user-attachments/assets/54e5aa5a-ef98-4c50-8fab-ec945b83cf13)
+
+
+3. 允许自定义样式后，我们先创建一个空的自定义样式文件。
+Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 以打开 Firefox 存放 Profiles 的目录， 找到并进入到你的浏览器 profile 文件夹（文件夹名称形如 `xxx.default-release`）。
+
+> 如果只装了一个 Firefox 版本，且没有自己新建 Profile，那 Profiles 目录下应该只有一个文件夹，如果不止一个，你可能需要先确定一下哪个文件夹是当前 Firefox 所用的。
+
+在这个 `xxx.default-release` 文件夹下，新建 `chrome` 文件夹，然后新建一个名为 `userChrome.css` 的文件，马上会编辑到。
 
 
 
-为了让 Firefox 支持自定义样式，先访问 `about:config` 然后搜索并将 `toolkit.legacyUserProfileCustomizations.stylesheets` 选项设置为 true。
+## 自动隐藏原生标签栏
 
-Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 打开 Firefox 存放 Profiles 的目录， 找到并进入到你的浏览器 profile 文件夹（比如说 `xxx.default-release`），非 Win 系统类似。
+在完成先前的步骤后，树状标签页和横向标签页栏会同时显示，整个窗口功能冗余且略显臃肿，这个问题可通过下面的操作来解决~
 
-> 如果只装了一个 Firefox 版本，且没有自己新建 Profile，那应该 Profiles 目录下应该只有一个文件夹。
+首先来处理一下 Sidebery 的扩展图标，如果还没有显示出来的话，可以点击地址栏右侧的扩展图标，然后右击 Sidebery 扩展，再点击 **Pin to Toolbar** 即可：
+![image](https://github.com/user-attachments/assets/28243190-08ac-4dcb-afcb-601ba650297a)
 
-在这个 `xxx.default-release` 文件夹下，新建 `chrome` 文件夹，并新建一个名为 `userChrome.css` 的文件，马上会编辑到。
+单击这个扩展图标可以显示/隐藏垂直标签页，个人没有隐藏树状标签页的需求，所以扩展按钮在其显示的时候是冗余的，为了让其在树状标签页显示的时候能够“临时隐藏”，我们可以通过 **定制工具栏（Customize Toolbar）** ，将它拖入原生的横向标签页栏中（马上就会实现当树状标签页显示时隐藏横向标签页栏），放到左边还是右边，则主要看自己的个人习惯：
+![img](images/toolbar_icon.png)
 
-> 介绍的操作方式是 Windows 上的，对于 Liunx 的同学，我相信看了以后能无师自通，就不过多介绍了。
+> 不将扩展图标显示出来的话以后会比较麻烦，因为树状标签页面板存在于窗口的侧边栏中，且原生的历史记录面板等也是，所以当你打开历史记录之类的其他面板时，树状标签页面板就会被替换掉，这时候如果有扩展图标，那么点一下它即可恢复树状标签页的显示，而如果没有的话则会需要先点击地址栏的扩展 -> 找到 Sidebery -> 点击，才能再次调出它，可见操作步骤会多出不少。
 
-## 自动隐藏默认标签栏
 
-首先我希望在树状标签页显示的时候，不要显示 Firefox 原生的横向标签页，这样整个界面就能简洁了。
+接下来便开始隐藏原生的横向标签页栏，打开 Sidebery 扩展的设置 -> 通用，找到“前言值设置（Preface Value）”，并把对应的“向窗口标题添加前言值”功能启用，然后在输入框里面输入 `---`，你会发现左上角的标题栏中的标题左边出现了 `---`。
 
-首先打开扩展的设置 -> 通用，找到“前言值设置（Preface Value）”，并且把对应的向窗口标题添加前言值的功能启用，在输入框里面输入 `---` 后，左上角的标题栏中的标题会显示出 `---`。
-
-编辑 `userChrome.css` 文件，添加如下的 CSS 样式代码并保存：
+然后编辑 `userChrome.css` 文件，添加如下的 CSS 样式代码并保存：
 
 ```css
 #main-window[titlepreface="---"] #TabsToolbar {
@@ -48,19 +70,19 @@ Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 打开 
 }
 ```
 
-在启用“添加前言值”功能后，扩展就会增加 `titlepreface` 属性，内容就是刚才输入框里输入的 `---`，所以就可以通过使用 CSS 选择器，来进行当前是否打开了树状标签页。
+> 在启用“添加前言值”功能后，扩展就会增加 `titlepreface` 属性，内容就是刚才输入框里输入的 `---`，所以就可以通过使用 CSS 选择器，来进行当前是否打开了树状标签页。
 
-重启浏览器后就能发现，只要树状标签页开着，默认的横向标签栏就不会显示了。
+重启浏览器，这时候你会发现，只要树状标签页开着，原生的横向标签栏就不会显示了。
 
 
 
-刚才提到这样设置后，左上角的标题栏中的标题前，会增加我们设置的前言值，那么为了更加美观，我们可以把值设置成一串不可见的字符（毕竟主要目的只是用于判断嘛）：
+如果你觉得标题栏中的标题前会多字符这事儿不美观，也可以把它替换成一串不可见的字符（直接复制粘贴即可）：
 
 ```
 ‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍
 ```
 
-然后同样编辑 `userChrome.css` 文件，替换内容以调整效果：
+再次编辑 `userChrome.css` 文件，替换其中的内容为：
 
 ```css
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #TabsToolbar {
@@ -68,11 +90,8 @@ Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 打开 
 }
 ```
 
-至此，就实现了当树状标签页显示的时候，不显示默认的横向标签页的效果了。
+再次“保存-重启”，检查一下效果吧~
 
-当显示了树状标签页后，扩展的按钮就没啥用了，毕竟树状标签页这么好用的东西，为什么还要再点按钮关闭呢？不过我不建议直接隐藏这个图标，因为拓展面板的显示是基于 Firefox 侧边栏的，所以有时候会被本身的一些面板替换（如历史面板），于是树状标签页就不显示了，所以我推荐把这个扩展图标放在标签栏中，这样原生和拓展的标签栏就相辅相成了：
-
-![img](images/toolbar_icon.png)
 
 ## 自动收缩标签页
 
@@ -97,9 +116,9 @@ Edge 的垂直标签页有一个收缩的效果，下面我们也来整一下。
 }
 ```
 
-这上面主要就是设置了默认的宽度，同时当鼠标移动上去后就增加宽度的效果。
+这上面主要设置了默认的宽度，以及当鼠标移上去时增加宽度的效果，你可以根据需要修改数值。
 
-重启浏览器后，如果你多试几次，会发现有个关闭按钮好像挺突兀的，这里再次编辑 `userChrome.css` 文件，向其末尾添加 CSS 代码：
+重启浏览器后就能实现效果的，但你很快会发现扩展的关闭按钮有点突兀，这里可以再次编辑 `userChrome.css` 文件，向其末尾添加 CSS 代码：
 
 ```css
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box #sidebar-close{
@@ -126,7 +145,7 @@ Edge 的垂直标签页有一个收缩的效果，下面我们也来整一下。
 ```
 
 
-（文末总结放出完整的 `userChrome.css` 文件内容）
+（文末总结会放出完整的 `userChrome.css` 文件内容）
 
 ## 配置扩展的树状面板
 
@@ -263,12 +282,4 @@ Sidebery 导入配置：
 
 
 
-​						Have fun！
-
-
-
-
-
-
-
-MKP-TAGS: #firefox #sidebery #edge #vertical-toolbar #tabs
+**Have fun！**
