@@ -26,7 +26,7 @@ Firefox 扩展商店里的树状标签页扩展不止一个，本人是在比较
 
 为了让 Firefox 支持自定义样式，先访问 `about:config` 然后搜索并将 `toolkit.legacyUserProfileCustomizations.stylesheets` 选项设置为 true。
 
-Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 打开 Firefox 存放 Profiles 的目录， 找到并进入到你的浏览器 profile 文件夹（比如说 `xxx.default-release`）。
+Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 打开 Firefox 存放 Profiles 的目录， 找到并进入到你的浏览器 profile 文件夹（比如说 `xxx.default-release`），非 Win 系统类似。
 
 > 如果只装了一个 Firefox 版本，且没有自己新建 Profile，那应该 Profiles 目录下应该只有一个文件夹。
 
@@ -44,10 +44,7 @@ Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 打开 
 
 ```css
 #main-window[titlepreface="---"] #TabsToolbar {
-  height: 0 !important;
-}
-#main-window[titlepreface="---"] #tabbrowser-tabs {
-  z-index: 0 !important;
+  display: none;
 }
 ```
 
@@ -67,10 +64,7 @@ Window + R 打开运行框，输入 `%appdata%\Mozilla\Firefox\Profiles` 打开 
 
 ```css
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #TabsToolbar {
-  height: 0 !important;
-}
-#main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #tabbrowser-tabs {
-  z-index: 0 !important;
+  display: none;
 }
 ```
 
@@ -87,26 +81,19 @@ Edge 的垂直标签页有一个收缩的效果，下面我们也来整一下。
 仍然是编辑 `userChrome.css` 文件，向其末尾添加 CSS 代码：
 
 ```css
-#main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box:not() {
-  min-width: var(--wide-tab-width) !important;
-  max-width: none !important;
-}
-
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box {
-  --thin-tab-width: 70px;
-  position: relative !important;
-  transition: all 100ms !important;
-  min-width: var(--thin-tab-width) !important;
-  max-width: var(--thin-tab-width) !important;
+    --thin-tab-width: 180px;
+    position: relative !important;
+    transition: all 100ms !important;
+    width: var(--thin-tab-width) !important;
 }
 
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box:hover {
-  --wide-tab-width: 370px;
-  transition: all 200ms !important;
-  min-width: var(--wide-tab-width) !important;
-  max-width: var(--wide-tab-width) !important;
-  margin-right: calc((var(--wide-tab-width) - var(--thin-tab-width)) * -1) !important;
-  z-index: 1;
+    --wide-tab-width: 360px;
+    transition: all 150ms !important;
+    width: var(--wide-tab-width) !important;
+    margin-right: calc((var(--wide-tab-width) - var(--thin-tab-width)) * -1) !important;
+    z-index: 1;
 }
 ```
 
@@ -118,6 +105,7 @@ Edge 的垂直标签页有一个收缩的效果，下面我们也来整一下。
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box #sidebar-close{
     display:none;
 }
+
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box:hover #sidebar-close{
     display:unset;
 }
@@ -131,11 +119,11 @@ Edge 的垂直标签页有一个收缩的效果，下面我们也来整一下。
   display: none !important;
   width: 0px !important;
 }
+
 #main-window[titlepreface="[1] "] #sidebar-box {
   visibility: collapse !important;
 }
 ```
-
 
 
 （文末总结放出完整的 `userChrome.css` 文件内容）
@@ -226,41 +214,32 @@ Edge 的垂直标签页有一个收缩的效果，下面我们也来整一下。
 
 ```css
 /* Hide the native toolbar */
-#main-window[titlepreface^="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #TabsToolbar {
-  height: 0 !important;
-}
-#main-window[titlepreface^="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #tabbrowser-tabs {
-  z-index: 0 !important;
+#main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #TabsToolbar {
+  display: none;
 }
 
-/* Shrink/unshrink sidebar. */
-#main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box:not() {
-    min-width: var(--wide-tab-width) !important;
-    max-width: none !important;
-}
-
+/* Shrink sidebar until hovered. */
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box {
-    --thin-tab-width: 70px;
+    --thin-tab-width: 180px;
     position: relative !important;
     transition: all 100ms !important;
-    min-width: var(--thin-tab-width) !important;
-    max-width: var(--thin-tab-width) !important;
+    width: var(--thin-tab-width) !important;
+}
+
+#main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box:hover {
+    --wide-tab-width: 360px;
+    transition: all 150ms !important;
+    width: var(--wide-tab-width) !important;
+    margin-right: calc((var(--wide-tab-width) - var(--thin-tab-width)) * -1) !important;
+    z-index: 1;
 }
 
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box #sidebar-close{
     display:none;
 }
+
 #main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box:hover #sidebar-close{
     display:unset;
-}
-
-#main-window[titlepreface="‌‌‌​‌‌​‍‌‌​‌​‍‌‌‌​‌​‌‍‌​‍‌‍‍"] #sidebar-box:hover {
-    --wide-tab-width: 370px;
-    transition: all 200ms !important;
-    min-width: var(--wide-tab-width) !important;
-    max-width: var(--wide-tab-width) !important;
-    margin-right: calc((var(--wide-tab-width) - var(--thin-tab-width)) * -1) !important;
-    z-index: 1;
 }
 
 #main-window[inFullscreen] #sidebar-box,
@@ -268,6 +247,7 @@ Edge 的垂直标签页有一个收缩的效果，下面我们也来整一下。
   display: none !important;
   width: 0px !important;
 }
+
 #main-window[titlepreface="[1] "] #sidebar-box {
   visibility: collapse !important;
 }
